@@ -1,0 +1,14 @@
+Package: com.todayios-cydia.tsrevealloader
+Name: TSRevealLoader
+Depends: firmware (>= 8.0), mobilesubstrate, applist, preferenceloader, com.zidaneno5.ExtensionList
+Version: 0.0.1
+Conflicts: com.rheard.rhrevealloader, com.rheard.reveal-loader
+Replaces: com.rheard.rhrevealloader, com.rheard.reveal-loader
+Priority: optional
+Architecture: iphoneos-arm
+Description: dynamically loads Reveal v24(12917) into applications and plugins. replace new version of Reveal.framework : ./layout/Library/Frameworks/RevealServer.framework
+Maintainer: manajay  <me@todayios.com>
+Author: manajay  <me@todayios.com>
+Section: Tweaks
+Icon: file:///layout/Library/PreferenceLoader/Preferences/reveal-logo@3x.png
+
