@@ -13,7 +13,14 @@ This code fixed it now.
 
 ### Screenshot
 
-- [douyin.jpg](screenshot/douyin.jpg)
+#### 效果
+![douyin.jpg](screenshot/douyin.jpg)
+
+#### 系统设置页位置
+ ![settings-01.jpg](screenshot/settings-01.png)
+
+#### 配置应用开关
+![settings-02.jpg](screenshot/settings-02.png)
 
 
 ### Thanks
