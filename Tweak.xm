@@ -22,16 +22,16 @@
 
 - (void)show
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"IBARevealRequestStart" object:nil];
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"IBARevealRequestStart" object:nil];
 }
 
 @end
 
 %ctor {
 	@autoreleasepool {
-		NSString *dylibPath = @"/Library/Application Support/RevealServer.framework/RevealServer";
+		NSString *dylibPath = @"/Library/Frameworks/RevealServer.framework/RevealServer";
 		if (![[NSFileManager defaultManager] fileExistsAtPath:dylibPath]) {
-			HBLogDebug(@"Reveal dylib file not found: %@", dylibPath);
+			HBLogError(@"Reveal dylib file not found: %@", dylibPath);
 			return;
 		} 
 
@@ -40,19 +40,20 @@
 		NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 		NSArray *selectedApplications = [pref objectForKey:@"selectedApplications"];
 		BOOL appEnabled = [selectedApplications containsObject:bundleIdentifier];
-		HBLogDebug(@"WoodPecker selectedApplications:%@ contains %@", selectedApplications, bundleIdentifier);
+		HBLogInfo(@"Reveal selectedApplications:%@ contains %@", selectedApplications, bundleIdentifier);
 		if (appEnabled) {
-			void *handle = dlopen([dylibPath UTF8String], RTLD_NOW);
-			if (handle == NULL) {
-				char *error = dlerror();
-				HBLogDebug(@"Load TSRevealLoader dylib fail: %s", error);
-				return;
-			} 
-			[[NSNotificationCenter defaultCenter] addObserver:[TSRevealLoader sharedInstance] 
-											selector:@selector(show) 
-											name:UIApplicationDidBecomeActiveNotification 
-											object:nil];
-			HBLogDebug(@"TSRevealLoader loaded %@ successed, handle %p", dylibPath,handle);
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+				HBLogInfo(@"try dlopen Reveal dylib");
+				void *handle = dlopen([dylibPath UTF8String], RTLD_NOW);
+				if (handle == NULL) {
+					char *error = dlerror();
+					HBLogError(@"Load Reveal dylib fail: %s", error);
+					return;
+				}
+
+				[[TSRevealLoader sharedInstance] show];
+				HBLogInfo(@"Reveal loaded %@ successed, handle %p", dylibPath,handle);
+			});
 		}	
 	}
 }

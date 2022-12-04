@@ -1,5 +1,5 @@
 echo "Copying framework..."
-DYLIB_PATH=./RevealLoaderPrefs/layout/Library/Application\ Support
+DYLIB_PATH=./RevealLoaderPrefs/layout/Library/Frameworks
 if [ ! -d "$DYLIB_PATH" ]; then
 	mkdir -p $DYLIB_PATH
 	echo '创建DYLIB_PATH'
