@@ -28,30 +28,31 @@
 @end
 
 %ctor {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-	NSDictionary *pref = [NSDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/com.todayios-cydia.tsrevealloader.plist"];
-	NSString *dylibPath = @"/Library/Frameworks/RevealServer.framework/RevealServer";
-
-	if (![[NSFileManager defaultManager] fileExistsAtPath:dylibPath]) {
-		NSLog(@"FLEXLoader dylib file not found: %@", dylibPath);
-		return;
-	} 
-
-	NSString *keyPath = [NSString stringWithFormat:@"TSRevealEnabled-%@", [[NSBundle mainBundle] bundleIdentifier]];
-	if ([[pref objectForKey:keyPath] boolValue]) {
-		void *handle = dlopen([dylibPath UTF8String], RTLD_NOW);
-		if (handle == NULL) {
-			char *error = dlerror();
-			NSLog(@"Load TSRevealLoader dylib fail: %s", error);
+	@autoreleasepool {
+		NSString *dylibPath = @"/Library/Application Support/RevealServer.framework/RevealServer";
+		if (![[NSFileManager defaultManager] fileExistsAtPath:dylibPath]) {
+			HBLogDebug(@"Reveal dylib file not found: %@", dylibPath);
 			return;
 		} 
-		[[NSNotificationCenter defaultCenter] addObserver:[TSRevealLoader sharedInstance] 
-										selector:@selector(show) 
-										name:UIApplicationDidBecomeActiveNotification 
-										object:nil];
-        NSLog(@"TSRevealLoader loaded %@ successed, handle %p", dylibPath,handle);
-	}	
 
-	[pool drain];
+		NSDictionary *pref = [NSDictionary dictionaryWithContentsOfFile:@"/User/Library/Preferences/com.todayios-cydia.tsrevealloader.plist"];
+
+		NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+		NSArray *selectedApplications = [pref objectForKey:@"selectedApplications"];
+		BOOL appEnabled = [selectedApplications containsObject:bundleIdentifier];
+		HBLogDebug(@"WoodPecker selectedApplications:%@ contains %@", selectedApplications, bundleIdentifier);
+		if (appEnabled) {
+			void *handle = dlopen([dylibPath UTF8String], RTLD_NOW);
+			if (handle == NULL) {
+				char *error = dlerror();
+				HBLogDebug(@"Load TSRevealLoader dylib fail: %s", error);
+				return;
+			} 
+			[[NSNotificationCenter defaultCenter] addObserver:[TSRevealLoader sharedInstance] 
+											selector:@selector(show) 
+											name:UIApplicationDidBecomeActiveNotification 
+											object:nil];
+			HBLogDebug(@"TSRevealLoader loaded %@ successed, handle %p", dylibPath,handle);
+		}	
+	}
 }

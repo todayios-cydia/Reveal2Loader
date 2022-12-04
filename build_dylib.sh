@@ -1,14 +1,12 @@
 echo "Copying framework..."
-DYLIB_PATH="./layout/Library/Frameworks/"
+DYLIB_PATH=./RevealLoaderPrefs/layout/Library/Application\ Support
 if [ ! -d "$DYLIB_PATH" ]; then
-	mkdir -p ./layout/Library/Frameworks/
+	mkdir -p $DYLIB_PATH
+	echo '创建DYLIB_PATH'
 fi
 
-DYLIB_SOURCE_PATH="~/Library/Application\ Support/Reveal/RevealServer/iOS/RevealServer.framework"
-cp -f -r ${DYLIB_SOURCE_PATH} layout/Library/Frameworks/
-
 echo "##WARNING: resign RevealServer.framework 注意替换自己本地的证书"
-# codesign -fs "Apple Development: ljduan2013@icloud.com (992QNX5ZG6)" ./layout/Library/Frameworks/RevealServer.framework
+codesign -fs "Apple Development: Qianduan Da (4V52F2MX45)" "$DYLIB_PATH"/RevealServer.framework
 echo "===================================="
 
 echo "Done."
